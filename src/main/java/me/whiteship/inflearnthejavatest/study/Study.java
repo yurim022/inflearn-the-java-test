@@ -1,17 +1,18 @@
 package me.whiteship.inflearnthejavatest.study;
 
+import lombok.Getter;
+import lombok.ToString;
 import me.whiteship.inflearnthejavatest.domain.StudyStatus;
 
+@Getter
+@ToString
 public class Study {
     private StudyStatus status = StudyStatus.DRAFT;
-
     private int limit;
+    private String name;
+
     public StudyStatus getStatus() {
         return this.status;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 
     public Study(int limit) {
@@ -27,5 +28,10 @@ public class Study {
     public Study(StudyStatus status, int limit) {
         this.status = status;
         this.limit = limit;
+    }
+
+    public Study(int limit, String name) {
+        this.limit = limit;
+        this.name = name;
     }
 }
