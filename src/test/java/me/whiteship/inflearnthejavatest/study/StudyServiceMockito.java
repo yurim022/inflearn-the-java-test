@@ -19,7 +19,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class StudyServiceTest2 {
+public class StudyServiceMockito {
 
     @Mock
     MemberService memberService;
