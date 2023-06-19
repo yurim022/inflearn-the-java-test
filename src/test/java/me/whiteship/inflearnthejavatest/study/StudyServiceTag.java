@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -21,7 +20,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class StudyServiceMockito {
+public class StudyServiceTag {
 
     @Mock
     MemberService memberService;
@@ -29,35 +28,10 @@ public class StudyServiceMockito {
     @Mock
     StudyRepository studyRepository;
 
-    @InjectMocks
-    StudyService studyService;
-
-
 
     @Test
-    @DisplayName("injectMockTest")
-    void createStudyInjectMock() {
-        //given
-        Member member = new Member();
-        member.setId(1L);
-        member.setEmail("yurim@email.com");
-
-        Study study = new Study(10, "테스트");
-
-        when(memberService.findById(1L)).thenReturn(Optional.of(member));
-        when(studyRepository.save(study)).thenReturn(study);
-
-        //when
-        studyService.createNewStudy(1L, study);
-
-        //then
-        assertEquals(member.getId(),study.getOwnerId());
-
-    }
-
-
-    @Test
-    @DisplayName("함수로 Mock 받기")
+    @DisplayName("스터디만들기 develop")
+    @Tag("develop")
     void createStudyServiceMockWithMethod() {
         MemberService memberService = mock(MemberService.class);
         StudyRepository studyRepository = mock(StudyRepository.class);
@@ -67,7 +41,8 @@ public class StudyServiceMockito {
 
 
     @Test
-    @DisplayName("전체 Mock 어노테이션으로 받기")
+    @DisplayName("스터디 만들기 prod")
+    @Tag("prod")
     void createStudyServiceMockWithAnnotation() {
 //        MemberService memberService = mock(MemberService.class);
 //        StudyRepository studyRepository = mock(StudyRepository.class);
@@ -76,7 +51,9 @@ public class StudyServiceMockito {
     }
 
     @Test
-    @DisplayName("특정 테스트에서만 Mock 사용")
+    @DisplayName("스터디만들기 develop & prod")
+    @Tag("prod")
+    @Tag("develop")
     void createStudyServiceMockOneTest(@Mock MemberService memberService,
                                         @Mock StudyRepository studyRepository) {
 
@@ -86,23 +63,19 @@ public class StudyServiceMockito {
 
 
     @Test
-    @DisplayName("when ~ thenReturn 으로 맴버 stubbing 하기")
+    @DisplayName("develop custom tag")
+    @DevelopTest
     void stubMemberTest() {
 
         Member member = new Member();
         member.setId(1L);
         member.setEmail("yurim@email.com");
-
-        when(memberService.findById(1L)).thenReturn(Optional.of(member));
-
-        Optional<Member> mockMember = memberService.findById(2L);
-        assertEquals("yurim@email.com",mockMember.get().getEmail());
-
     }
 
 
     @Test
-    @DisplayName("when ~ thenReturn 으로 any 맴버 stubbing 하기")
+    @DisplayName("prod custom tag")
+    @ProdTest
     void stubMemberAnyTest() {
 
         Member member = new Member();
@@ -181,74 +154,6 @@ public class StudyServiceMockito {
 
         //then
         assertEquals(member.getId(),study.getOwnerId());
-
-    }
-
-
-
-    @Test
-    @DisplayName("createNewStudyValidate")
-    void createNewStudyValidate() {
-
-        //given
-        StudyService studyService = new StudyService(memberService,studyRepository);
-        Member member = new Member();
-        member.setId(1L);
-        member.setEmail("yurim@email.com");
-
-        Study study = new Study(10, "테스트");
-
-        when(memberService.findById(1L)).thenReturn(Optional.of(member));
-        when(studyRepository.save(study)).thenReturn(study);
-
-        //when
-        studyService.createNewStudy(1L, study);
-
-        //then
-        assertEquals(member.getId(),study.getOwnerId());
-
-        verify(memberService, times(1)).notify(study);
-        verify(memberService, times(1)).notify(member);
-
-        verify(memberService, never()).validate(any());
-
-        InOrder inOrder = inOrder(memberService);
-        inOrder.verify(memberService).notify(study);
-        inOrder.verify(memberService).notify(member);
-
-        verifyNoMoreInteractions(memberService);
-
-    }
-
-
-
-    @Test
-    @DisplayName("Bdd Style")
-    void createNewStudyBdd() {
-
-        //given
-        StudyService studyService = new StudyService(memberService,studyRepository);
-        Member member = new Member();
-        member.setId(1L);
-        member.setEmail("yurim@email.com");
-
-        Study study = new Study(10, "테스트");
-
-        given(memberService.findById(1L)).willReturn(Optional.of(member));
-        given(studyRepository.save(study)).willReturn(study);
-
-        //when
-        studyService.createNewStudy(1L, study);
-
-        //then
-        assertEquals(member.getId(),study.getOwnerId());
-
-        then(memberService).should(times(1)).notify(study);
-        then(memberService).should(times(1)).notify(member);
-
-        then(memberService).should(never()).validate(any());
-
-        then(memberService).shouldHaveNoMoreInteractions();
 
     }
 
